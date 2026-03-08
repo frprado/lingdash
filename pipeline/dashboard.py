@@ -160,7 +160,10 @@ KEEP_TOPICS = {
     "Linguistics and Language Studies",
 }
 
-df = pd.read_csv(os.path.join(os.path.dirname(__file__), "data.csv"))
+_data_path = os.path.join(os.path.dirname(__file__), "data.parquet")
+if not os.path.exists(_data_path):
+    _data_path = os.path.join(os.path.dirname(__file__), "data.csv")
+df = pd.read_parquet(_data_path) if _data_path.endswith(".parquet") else pd.read_csv(_data_path)
 df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
 df = df[df["primary_topic"].isin(KEEP_TOPICS)].copy()
 
