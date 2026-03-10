@@ -27,8 +27,10 @@ params = {
     "per_page": 200,
 }
 
+# OpenAlex polite pool: set your email so they can contact you if needed.
+# See https://docs.openalex.org/how-to-use-the-api/rate-limits-and-authentication
 headers = {
-    "User-Agent": "frederico.prado@proton.me"
+    "User-Agent": "mailto:YOUR_EMAIL_HERE"
 }
 
 _DIR = os.path.dirname(__file__)

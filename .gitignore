@@ -182,3 +182,11 @@ cython_debug/
 
 # Large data files — commit data.parquet instead
 pipeline/data.csv
+
+# Generated report outputs (run generate_report.py to produce these)
+pipeline/report.html
+pipeline/report.pdf
+pipeline/report.png
+
+# Virtual environment
+.venv/

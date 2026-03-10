@@ -29,7 +29,8 @@ import requests
 import pandas as pd
 
 _DIR    = os.path.dirname(__file__)
-HEADERS = {"User-Agent": "frederico.prado@proton.me"}
+# OpenAlex polite pool: set your email so they can contact you if needed.
+HEADERS = {"User-Agent": "mailto:YOUR_EMAIL_HERE"}
 
 # ── Thresholds ────────────────────────────────────────────────────────────────
 MIN_H_INDEX = 15    # journals with h-index below this are considered local/minor

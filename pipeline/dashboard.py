@@ -13,6 +13,7 @@ not just raw paper counts which conflate growth with composition shift.
 """
 import ast
 import os
+import numpy as np
 import pandas as pd
 import pycountry
 
@@ -151,6 +152,14 @@ def iso2_to_name(code):
 # ─────────────────────────────────────────
 # Load & prepare data
 # ─────────────────────────────────────────
+TOP_JOURNALS_LIST = [
+    "Language",
+    "Linguistic Inquiry",
+    "Lingua",
+    "Journal of Linguistics",
+    "Natural language and linguistic theory"
+]
+
 KEEP_TOPICS = {
     "Syntax, Semantics, Linguistic Variation",
     "Linguistic research and analysis",
@@ -315,6 +324,25 @@ langs_concepts_tab = dbc.Tab(label="Languages", tab_id="tab_langs_concepts", chi
         dbc.Col(dcc.Graph(id="lang_trend", style={"height": GH})),
         class_name="mt-2",
     ),
+    dbc.Row(
+        dbc.Col(dcc.Graph(id="diversity_trend", style={"height": "280px"})),
+        class_name="mt-2",
+    ),
+])
+
+top_journals_tab = dbc.Tab(label="Top Journals", tab_id="tab_top_journals", children=[
+    dbc.Row([
+        kpi_card("Most linguistically diverse journal", "kpi_j_div_top", C_PRIMARY,  width=5, value_size="1.1rem"),
+        kpi_card("Least linguistically diverse journal", "kpi_j_div_bot", C_MUTED,   width=5, value_size="1.1rem"),
+    ], class_name="mt-3 g-3"),
+    dbc.Row(
+        dbc.Col(dcc.Graph(id="top_journals_ts",       style={"height": GH})),
+        class_name="mt-3",
+    ),
+    dbc.Row([
+        dbc.Col(dcc.Graph(id="top_journals_diversity",  style={"height": GH}), width=5),
+        dbc.Col(dcc.Graph(id="top_journals_lang_dist",  style={"height": GH}), width=7),
+    ], class_name="mt-2"),
 ])
 
 papers_tab = dbc.Tab(label="Papers", tab_id="tab_papers", children=[
@@ -442,7 +470,7 @@ app.layout = dbc.Container([
         dbc.Col(controls, width=3),
         dbc.Col(
             dbc.Tabs(
-                [overview_tab, journals_countries_tab, langs_concepts_tab, papers_tab],
+                [overview_tab, journals_countries_tab, langs_concepts_tab, top_journals_tab, papers_tab],
                 id="tabs", active_tab="tab_overview",
             ),
             width=9,
@@ -568,6 +596,18 @@ def bar_and_trend(series, label, series_name, dff_ref, top_n=20, trend_n=TOP_N):
     return bar_fig, trend_fig
 
 
+def compute_diversity(lang_exploded):
+    """Shannon entropy (bits) of language distribution per year."""
+    rows = lang_exploded[lang_exploded["language_list"].str.strip() != ""]
+    if rows.empty:
+        return pd.DataFrame(columns=["year", "entropy"])
+    def _h(g):
+        c = g.value_counts()
+        p = c / c.sum()
+        return float(-(p * np.log2(p)).sum())
+    return rows.groupby("year")["language_list"].apply(_h).reset_index(name="entropy")
+
+
 def exploded_bar_and_trend(exploded_series, exploded_df, year_col, color_col,
                             label, top_n=20, trend_n=TOP_N):
     s = exploded_series.dropna()
@@ -608,6 +648,7 @@ def exploded_bar_and_trend(exploded_series, exploded_df, year_col, color_col,
 
     Output("lang_trend",          "figure"),
     Output("lang_family_treemap", "figure"),
+    Output("diversity_trend",     "figure"),
 
     Output("papers_table",    "columns"),
     Output("papers_table",    "data"),
@@ -692,9 +733,11 @@ def update_all(year_range, topics, countries, journals, languages, concepts,
         lang_series, lang_exploded, "year", "language_list", "language")
 
     # ── language family treemap ──
+    _EXCLUDE_FAMILIES = {"Other/Unclassified", "Uncoded", "Undetermined"}
     _fam = (
         lang_exploded[
-            lang_exploded["language_list"].str.strip().astype(bool)
+            lang_exploded["language_list"].str.strip().astype(bool) &
+            ~lang_exploded["family"].isin(_EXCLUDE_FAMILIES)
         ]
         .groupby(["family", "language_list"])
         .size()
@@ -716,6 +759,22 @@ def update_all(year_range, topics, countries, journals, languages, concepts,
     else:
         lang_family_fig = style_fig(px.scatter(title="Languages studied · by family"))
 
+    # ── language diversity trend ──
+    div_df = compute_diversity(df_lang.loc[dff.index])
+    if not div_df.empty:
+        fig_diversity = px.line(
+            div_df, x="year", y="entropy",
+            title="Language diversity index · per year",
+            color_discrete_sequence=[C_PRIMARY],
+            line_shape="spline",
+        )
+        fig_diversity.update_traces(line=dict(width=2, color=C_PRIMARY))
+        fig_diversity.update_xaxes(title_text="")
+        fig_diversity.update_yaxes(title_text="Shannon H (bits)")
+        style_fig(fig_diversity)
+    else:
+        fig_diversity = style_fig(px.scatter(title="Language diversity index · per year"))
+
     # ── papers table ──
     table_cols = ["year", "title", "journal", "cited_by", "paper_country", "doi"]
     available  = [c for c in table_cols if c in dff.columns]
@@ -730,7 +789,7 @@ def update_all(year_range, topics, countries, journals, languages, concepts,
         fig_map,
         journal_bar_fig, journal_trend_fig,
         country_bar_fig, country_trend_fig,
-        lang_trend_fig, lang_family_fig,
+        lang_trend_fig, lang_family_fig, fig_diversity,
         columns, data,
     )
 
@@ -794,6 +853,107 @@ def update_filters(topic_click, journal_click, country_click,
             return (new, *_nu)
 
     return (store, *_nu)
+
+
+# ─────────────────────────────────────────
+# Top Journals callback
+# ─────────────────────────────────────────
+@app.callback(
+    Output("kpi_j_div_top",         "children"),
+    Output("kpi_j_div_bot",         "children"),
+    Output("top_journals_ts",        "figure"),
+    Output("top_journals_diversity", "figure"),
+    Output("top_journals_lang_dist", "figure"),
+    Input("year_range", "value"),
+)
+def update_top_journals(year_range):
+    if year_range is None:
+        year_range = [int(df["year"].min()), int(df["year"].max())]
+
+    dff_j = df[
+        df["journal"].isin(TOP_JOURNALS_LIST) &
+        (df["year"] >= year_range[0]) &
+        (df["year"] <= year_range[1])
+    ].copy()
+    dfl_j = df_lang[
+        df_lang["journal"].isin(TOP_JOURNALS_LIST) &
+        (df_lang["year"] >= year_range[0]) &
+        (df_lang["year"] <= year_range[1])
+    ].copy()
+
+    # Publications per year per journal
+    ts_df = dff_j.groupby(["year", "journal"]).size().reset_index(name="count")
+    if not ts_df.empty:
+        fig_ts = px.line(
+            ts_df, x="year", y="count", color="journal",
+            title="Publications per year · curated journals",
+            color_discrete_sequence=PALETTE,
+            line_shape="spline",
+        )
+        fig_ts.update_traces(line=dict(width=2))
+        fig_ts.update_xaxes(title_text="")
+        fig_ts.update_yaxes(title_text="papers")
+        style_fig_with_legend(fig_ts)
+    else:
+        fig_ts = style_fig(px.scatter(title="Publications per year · curated journals"))
+
+    # Diversity index per journal
+    def _h(g):
+        g = g[g.str.strip() != ""]
+        if g.empty:
+            return 0.0
+        c = g.value_counts()
+        p = c / c.sum()
+        return float(-(p * np.log2(p)).sum())
+
+    non_empty = dfl_j[dfl_j["language_list"].str.strip() != ""]
+    if not non_empty.empty:
+        div_j = (
+            non_empty.groupby("journal")["language_list"]
+            .apply(_h)
+            .reset_index(name="H")
+            .sort_values("H", ascending=False)
+        )
+        kpi_top = f"{div_j.iloc[0]['journal']} ({div_j.iloc[0]['H']:.2f} bits)"
+        kpi_bot = f"{div_j.iloc[-1]['journal']} ({div_j.iloc[-1]['H']:.2f} bits)" if len(div_j) > 1 else "—"
+
+        colors = [PALETTE[i % len(PALETTE)] for i in range(len(div_j))]
+        fig_div = px.bar(
+            div_j, x="H", y="journal", orientation="h",
+            title="Language diversity index per journal",
+        )
+        fig_div.update_traces(marker_color=colors)
+        fig_div.update_yaxes(autorange="reversed", title_text="")
+        fig_div.update_xaxes(title_text="Shannon H (bits)")
+        style_fig(fig_div)
+    else:
+        kpi_top = kpi_bot = "—"
+        fig_div = style_fig(px.scatter(title="Language diversity index per journal"))
+
+    # Language distribution per journal (top 8 languages stacked)
+    top_langs_overall = (
+        non_empty["language_list"].value_counts().head(8).index.tolist()
+        if not non_empty.empty else []
+    )
+    if top_langs_overall:
+        lang_dist_df = (
+            non_empty[non_empty["language_list"].isin(top_langs_overall)]
+            .groupby(["journal", "language_list"]).size().reset_index(name="count")
+        )
+        fig_lang = px.bar(
+            lang_dist_df, x="count", y="journal", color="language_list",
+            orientation="h",
+            title="Language distribution per journal (top 8 languages)",
+            color_discrete_sequence=PALETTE,
+            barmode="stack",
+        )
+        fig_lang.update_yaxes(title_text="")
+        fig_lang.update_xaxes(title_text="papers")
+        style_fig_with_legend(fig_lang)
+    else:
+        fig_lang = style_fig(px.scatter(title="Language distribution per journal"))
+
+    return kpi_top, kpi_bot, fig_ts, fig_div, fig_lang
 
 
 # ─────────────────────────────────────────

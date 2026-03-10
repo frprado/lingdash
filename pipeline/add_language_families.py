@@ -251,6 +251,144 @@ FAMILY_BY_CODE: dict[str, str] = {
     "tlh": "Constructed", "art": "Constructed", "afh": "Constructed",
 
     "und": "Undetermined",
+
+    # Austronesian (additional)
+    "chk": "Austronesian", "cmc": "Austronesian", "day": "Austronesian",
+    "fil": "Austronesian", "gay": "Austronesian", "gil": "Austronesian",
+    "gor": "Austronesian", "hil": "Austronesian", "hmo": "Austronesian",
+    "iba": "Austronesian", "kaw": "Austronesian", "kos": "Austronesian",
+    "mak": "Austronesian", "mdr": "Austronesian", "mno": "Austronesian",
+    "nau": "Austronesian", "niu": "Austronesian", "pag": "Austronesian",
+    "pam": "Austronesian", "pon": "Austronesian", "rar": "Austronesian",
+    "sas": "Austronesian", "tkl": "Austronesian", "tog": "Austronesian",
+    "tvl": "Austronesian", "yap": "Austronesian",
+
+    # Indo-European (additional)
+    "cos": "Indo-European", "div": "Indo-European", "fry": "Indo-European",
+    "gsw": "Indo-European", "him": "Indo-European", "lah": "Indo-European",
+    "lim": "Indo-European", "mag": "Indo-European", "mwl": "Indo-European",
+    "mwr": "Indo-European", "non": "Indo-European", "pal": "Indo-European",
+    "roh": "Indo-European", "rup": "Indo-European", "sco": "Indo-European",
+    "snd": "Indo-European", "sog": "Indo-European", "srd": "Indo-European",
+    "tgk": "Indo-European", "wen": "Indo-European", "wln": "Indo-European",
+    "zza": "Indo-European",
+
+    # Niger-Congo (additional)
+    "dua": "Niger-Congo", "dyu": "Niger-Congo", "efi": "Niger-Congo",
+    "eka": "Niger-Congo", "ewo": "Niger-Congo", "fat": "Niger-Congo",
+    "gaa": "Niger-Congo", "gba": "Niger-Congo", "grb": "Niger-Congo",
+    "ijo": "Niger-Congo", "kam": "Niger-Congo", "kmb": "Niger-Congo",
+    "kpe": "Niger-Congo", "kro": "Niger-Congo", "lam": "Niger-Congo",
+    "lol": "Niger-Congo", "lua": "Niger-Congo", "lub": "Niger-Congo",
+    "man": "Niger-Congo", "men": "Niger-Congo", "mos": "Niger-Congo",
+    "nde": "Niger-Congo", "nic": "Niger-Congo", "nym": "Niger-Congo",
+    "nyn": "Niger-Congo", "nyo": "Niger-Congo", "nzi": "Niger-Congo",
+    "sag": "Niger-Congo", "snk": "Niger-Congo", "srr": "Niger-Congo",
+    "suk": "Niger-Congo", "sus": "Niger-Congo", "tem": "Niger-Congo",
+    "tum": "Niger-Congo", "vai": "Niger-Congo", "yao": "Niger-Congo",
+    "znd": "Niger-Congo",
+
+    # Sino-Tibetan (additional)
+    "iii": "Sino-Tibetan", "kar": "Sino-Tibetan", "new": "Sino-Tibetan",
+    "nwc": "Sino-Tibetan",
+
+    # Turkic (additional)
+    "chg": "Turkic", "kaa": "Turkic", "krc": "Turkic",
+
+    # Afro-Asiatic (additional)
+    "tmh": "Afro-Asiatic", "uga": "Afro-Asiatic", "wal": "Afro-Asiatic",
+    "zen": "Afro-Asiatic", "zgh": "Afro-Asiatic",
+
+    # Nilo-Saharan (additional)
+    "son": "Nilo-Saharan",
+
+    # Na-Dene (additional)
+    "chp": "Na-Dene", "dgr": "Na-Dene", "gwi": "Na-Dene", "hup": "Na-Dene",
+
+    # Algic (additional)
+    "chy": "Algic", "del": "Algic",
+
+    # Muskogean
+    "cho": "Muskogean", "mus": "Muskogean",
+
+    # Siouan
+    "dak": "Siouan", "osa": "Siouan", "sio": "Siouan",
+
+    # Uto-Aztecan
+    "lui": "Uto-Aztecan", "nah": "Uto-Aztecan",
+
+    # Oto-Manguean
+    "oto": "Oto-Manguean", "zap": "Oto-Manguean",
+
+    # Tupian
+    "grn": "Tupian", "tup": "Tupian",
+
+    # Arawakan (additional)
+    "ter": "Arawakan",
+
+    # Cariban
+    "car": "Cariban",
+
+    # Chibchan
+    "chb": "Chibchan",
+
+    # Salishan
+    "sal": "Salishan",
+
+    # Wakashan
+    "wak": "Wakashan",
+
+    # Tsimshianic
+    "tsi": "Tsimshianic",
+
+    # Dravidian (additional)
+    "kru": "Dravidian",
+
+    # Mongolic (additional)
+    "xal": "Mongolic",
+
+    # Uralic (additional)
+    "chm": "Uralic", "kom": "Uralic", "sel": "Uralic",
+
+    # Northwest Caucasian (additional)
+    "kbd": "Northwest Caucasian",
+
+    # Northeast Caucasian (additional)
+    "dar": "Northeast Caucasian",
+
+    # Tai-Kadai (additional)
+    "shn": "Tai-Kadai",
+
+    # Eskimo-Aleut (additional)
+    "ypk": "Eskimo-Aleut",
+
+    # Language isolates (additional)
+    "hai": "Language Isolate", "kut": "Language Isolate",
+    "sad": "Language Isolate", "was": "Language Isolate",
+    "zun": "Language Isolate",
+
+    # Creole/Pidgin (additional)
+    "chn": "Creole/Pidgin", "srn": "Creole/Pidgin",
+
+    # Constructed (additional)
+    "zbl": "Constructed",
+
+    # Papuan (heterogeneous grouping)
+    "paa": "Papuan",
+
+    # Special / umbrella codes — excluded from treemap in the dashboard
+    "mis": "Uncoded", "mul": "Uncoded", "nai": "Uncoded",
+    "sai": "Uncoded", "zxx": "Uncoded", "tut": "Uncoded",
+
+    # Remaining stragglers
+    "ach": "Nilo-Saharan",      # Acholi — Western Nilotic
+    "cai": "Uncoded",           # Central American Indian — umbrella
+    "cau": "Uncoded",           # Caucasian — umbrella
+    "cha": "Austronesian",      # Chamorro
+    "cnr": "Indo-European",     # Montenegrin — South Slavic
+    "dut": "Indo-European",     # Dutch (B-code alias)
+    "nld": "Indo-European",     # Dutch (T-code alias)
+    "kas": "Indo-European",     # Kashmiri — Dardic/Indo-Aryan
 }
 
 # ── 2. Wikidata SPARQL fallback ───────────────────────────────────────────────
@@ -300,7 +438,7 @@ WIKIDATA_FAMILY_MAP: dict[str, str] = {
 
 SPARQL_URL = "https://query.wikidata.org/sparql"
 SPARQL_HEADERS = {
-    "User-Agent": "LingdashFamilyLookup/1.0 (frederico.prado@proton.me)",
+    "User-Agent": "LingdashFamilyLookup/1.0 (mailto:YOUR_EMAIL_HERE)",
     "Accept": "application/sparql-results+json",
 }
 
