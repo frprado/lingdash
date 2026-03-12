@@ -961,4 +961,4 @@ def update_top_journals(year_range):
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     print("Starting dashboard on http://127.0.0.1:8050")
-    app.run(debug=True)
+    app.run(debug=False)
