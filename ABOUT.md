@@ -73,19 +73,16 @@ Subfields: Phonology & Phonetics · Syntax & Grammar · Semantics · Pragmatics 
 ## Key Findings
 
 ### Output growth
-Annual publication volume grew substantially from the 1960s to the 2020s — a trend that reflects both genuine expansion of the field and the progressive digitisation of scholarly publishing that has made older work indexable.
+Annual publication volume grew substantially from the 1960s to the 2020s. Publication volume increased at an accelerated pace starting from the early 2000s and peaked in 2021, reflecting both the acceleration of scholarly research in the field, which was (and is) driven by multiple factors within academia (increasing pressure to publish) and outside of it.
 
 ### Geographic concentration
 Research output is heavily concentrated in a small number of countries. A single country accounts for a disproportionate share of the corpus, and this imbalance persists across decades, though the relative shares of the top producers have shifted over time.
 
 ### Language bias
-English dominates as the object of study by a wide margin. Indo-European languages collectively account for the large majority of language mentions. Languages from Austronesian, Niger-Congo, and Afro-Asiatic families — which together encompass the majority of the world's speakers — are systematically underrepresented.
+English dominates as the object of study by a wide margin. Indo-European languages collectively account for the large majority of language mentions. Languages from Austronesian, Niger-Congo, and Afro-Asiatic families (which together encompass the majority of the world's speakers) are systematically underrepresented. While language diversity increased with time since the 1960s, English and Indo-european languages remain overrpresented in linguistic publications.
 
 ### Diversity over time
-Shannon entropy (H bits) computed per year measures how evenly linguistic attention is distributed. A higher H indicates that more languages are studied in roughly equal proportions in that year; a lower H indicates concentration on a few languages. The diversity index shows modest growth over the study period, but the field's linguistic gaze remains narrow relative to the world's actual linguistic diversity.
-
-### Journals as gatekeepers
-Language diversity varies substantially across journals. Some venues consistently publish research on a wide range of languages; others are effectively monolingual in their object of study. This heterogeneity points to editorial policy — and the communities journals serve — as a structural factor in shaping which languages get academic attention.
+Shannon entropy (H bits) computed per year measures how evenly linguistic attention is distributed. A higher H indicates that more languages are studied in roughly equal proportions in that year; a lower H indicates concentration on a few languages. The diversity index shows steady growth in the period considered, a reflection of a growing interest, and concern, for broadening the research horizon of linguistic scholarship.
 
 ---
 
