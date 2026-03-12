@@ -2,6 +2,8 @@
 
 A bibliometric dashboard tracking peer-reviewed linguistics publications indexed in [OpenAlex](https://openalex.org). It maps where linguistics research comes from, which languages are studied most, and how the breadth of the field's agenda has changed over time.
 
+The report below provides an overview summary of the key findings surfacing from the corpus.
+
 ![Report preview](preview.png)
 
 ## What it does
