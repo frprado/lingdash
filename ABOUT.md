@@ -75,14 +75,22 @@ Subfields: Phonology & Phonetics · Syntax & Grammar · Semantics · Pragmatics 
 ### Output growth
 Annual publication volume grew substantially from the 1960s to the 2020s. Publication volume increased at an accelerated pace starting from the early 2000s and peaked in 2021, reflecting both the acceleration of scholarly research in the field, which was (and is) driven by multiple factors within academia (increasing pressure to publish) and outside of it.
 
+![Publications per year](assets/fig_output_growth.png)
+
 ### Geographic concentration
 Research output is heavily concentrated in a small number of countries. A single country accounts for a disproportionate share of the corpus, and this imbalance persists across decades, though the relative shares of the top producers have shifted over time.
+
+![Geographic distribution of linguistics research](assets/fig_geography.png)
 
 ### Language bias
 English dominates as the object of study by a wide margin. Indo-European languages collectively account for the large majority of language mentions. Languages from Austronesian, Niger-Congo, and Afro-Asiatic families (which together encompass the majority of the world's speakers) are systematically underrepresented. While language diversity increased with time since the 1960s, English and Indo-european languages remain overrpresented in linguistic publications.
 
+![Most studied languages](assets/fig_language_bias.png)
+
 ### Diversity over time
 Shannon entropy (H bits) computed per year measures how evenly linguistic attention is distributed. A higher H indicates that more languages are studied in roughly equal proportions in that year; a lower H indicates concentration on a few languages. The diversity index shows steady growth in the period considered, a reflection of a growing interest, and concern, for broadening the research horizon of linguistic scholarship.
+
+![Language diversity index over time](assets/fig_diversity.png)
 
 ---
 
