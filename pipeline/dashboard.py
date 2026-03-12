@@ -432,10 +432,10 @@ app.layout = dbc.Container([
             html.Div([
                 html.H4("Linguistics Research", className="mb-0 fw-bold",
                         style={"color": C_TEXT, "letterSpacing": "-0.02em"}),
-                html.Span(" Dashboard", style={"color": C_PRIMARY, "fontWeight": "700",
-                                               "fontSize": "1.3rem"}),
+                html.Span(" · A Bibliometric Study", style={"color": C_PRIMARY, "fontWeight": "500",
+                                               "fontSize": "1.1rem"}),
             ], style={"display": "inline-flex", "alignItems": "baseline", "gap": "2px"}),
-            html.P("Global linguistics publications via OpenAlex · 1960–2024",
+            html.P("~80,000 peer-reviewed articles · OpenAlex · 1960–2024",
                    className="mb-0 mt-1", style={"fontSize": "12px", "color": C_MUTED}),
         ], style={"padding": "20px 4px 16px"}),
     ), style={"borderBottom": f"1px solid {C_BORDER}", "marginBottom": "20px"}),
