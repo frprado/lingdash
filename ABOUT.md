@@ -85,17 +85,12 @@ Research output is heavily concentrated in a small number of countries. A single
 ### Language bias
 English dominates as the object of study by a wide margin. Indo-European languages collectively account for the large majority of language mentions. Languages from Austronesian, Niger-Congo, and Afro-Asiatic families (which together encompass the majority of the world's speakers) are systematically underrepresented. While language diversity increased with time since the 1960s, English and Indo-european languages remain overrpresented in linguistic publications.
 
-![Most studied languages](assets/fig_language_bias.png)
+![Languages studied by family](assets/fig_language_bias.png)
 
 ### Diversity over time
 Shannon entropy (H bits) computed per year measures how evenly linguistic attention is distributed. A higher H indicates that more languages are studied in roughly equal proportions in that year; a lower H indicates concentration on a few languages. The diversity index shows steady growth in the period considered, a reflection of a growing interest, and concern, for broadening the research horizon of linguistic scholarship.
 
 ![Language diversity index over time](assets/fig_diversity.png)
-
-### Subfield distribution
-The chart below shows how the relative share of the top six linguistics subfields — as classified by zero-shot embedding similarity — has evolved over time. Shifts in the stacked bands reflect changing research priorities within the field: the rise of computational linguistics and NLP is visible from the 1990s onward, while more traditional subfields such as syntax and historical linguistics show a declining relative share.
-
-![Subfield distribution over time](assets/fig_subfields.png)
 
 ---
 
