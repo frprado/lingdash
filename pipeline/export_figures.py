@@ -137,39 +137,59 @@ fig1.update_yaxes(title_text="Papers published", gridcolor=C_BORDER)
 _style(fig1, height=360)
 fig1.write_image(os.path.join(OUT_DIR, "fig_output_growth.png"), width=900, scale=2)
 
-# ── 2. Geographic concentration — world map ───────────────────────────────────
+# ── 2. Geographic concentration — stacked area, country share over time ───────
 print("Generating fig_geography.png…")
-map_df = df[df["country_alpha3"].notna()].groupby("country_alpha3").size().reset_index(name="Papers")
-fig2 = px.choropleth(
-    map_df, locations="country_alpha3", color="Papers",
-    color_continuous_scale=[[0, "#E0E7FF"], [0.4, C_PRIMARY], [1, C_TEXT]],
-    projection="natural earth",
+TOP_N = 6
+TOP_COUNTRIES = (
+    df["country_name"].dropna()
+    .loc[lambda s: s.str.strip() != ""]
+    .value_counts().head(TOP_N).index.tolist()
 )
-fig2.update_geos(showframe=False, showcoastlines=True,
-                 coastlinecolor=C_BORDER, landcolor="#F8FAFC",
-                 oceancolor="#EFF6FF", showocean=True)
+country_trend_df = (
+    df[df["country_name"].isin(TOP_COUNTRIES)]
+    .groupby(["year", "country_name"]).size().reset_index(name="count")
+)
+fig2 = px.area(country_trend_df, x="year", y="count", color="country_name",
+               line_shape="spline", color_discrete_sequence=PALETTE,
+               category_orders={"country_name": TOP_COUNTRIES})
+fig2.update_traces(stackgroup="one", groupnorm="percent", line=dict(width=0.6))
+fig2.update_xaxes(title_text="", showgrid=False)
+fig2.update_yaxes(title_text="% share of publications", range=[0, 100],
+                  ticksuffix="%", gridcolor=C_BORDER)
 fig2.update_layout(
-    template="plotly_white", paper_bgcolor="#FFFFFF",
-    height=420, margin=dict(l=0, r=0, t=16, b=0),
-    font=dict(family="'Inter', system-ui, sans-serif", size=12, color=C_TEXT),
-    coloraxis_colorbar=dict(thickness=12, len=0.6, title="Papers"),
+    template="plotly_white", paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+    height=400, font=dict(family="'Inter', system-ui, sans-serif", size=12, color=C_TEXT),
+    margin=dict(l=16, r=180, t=32, b=16),
+    legend=dict(orientation="v", yanchor="middle", y=0.5,
+                xanchor="left", x=1.02, bgcolor="rgba(255,255,255,0.9)",
+                bordercolor=C_BORDER, borderwidth=1, font=dict(size=11)),
 )
-fig2.write_image(os.path.join(OUT_DIR, "fig_geography.png"), width=1100, scale=2)
+fig2.write_image(os.path.join(OUT_DIR, "fig_geography.png"), width=1000, scale=2)
 
-# ── 3. Language bias — top languages bar chart ────────────────────────────────
+# ── 3. Language bias — stacked area, language share over time ─────────────────
 print("Generating fig_language_bias.png…")
 _lang_vc = df_lang[df_lang["language_list"].str.strip() != ""]["language_list"].value_counts()
-top20 = _lang_vc.head(20).reset_index()
-top20.columns = ["language", "count"]
-fig3 = px.bar(top20, x="count", y="language", orientation="h",
-              color="count",
-              color_continuous_scale=[[0, "#E0E7FF"], [1, C_PRIMARY]])
-fig3.update_layout(yaxis=dict(categoryorder="total ascending"), showlegend=False)
-fig3.update_coloraxes(showscale=False)
-fig3.update_xaxes(title_text="Papers mentioning language", gridcolor=C_BORDER)
-fig3.update_yaxes(title_text="")
-_style(fig3, height=480)
-fig3.write_image(os.path.join(OUT_DIR, "fig_language_bias.png"), width=800, scale=2)
+TOP_LANGS = _lang_vc.head(TOP_N).index.tolist()
+lang_trend_df = (
+    df_lang[df_lang["language_list"].isin(TOP_LANGS)]
+    .groupby(["year", "language_list"]).size().reset_index(name="count")
+)
+fig3 = px.area(lang_trend_df, x="year", y="count", color="language_list",
+               line_shape="spline", color_discrete_sequence=PALETTE,
+               category_orders={"language_list": TOP_LANGS})
+fig3.update_traces(stackgroup="one", groupnorm="percent", line=dict(width=0.6))
+fig3.update_xaxes(title_text="", showgrid=False)
+fig3.update_yaxes(title_text="% share of language mentions", range=[0, 100],
+                  ticksuffix="%", gridcolor=C_BORDER)
+fig3.update_layout(
+    template="plotly_white", paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+    height=400, font=dict(family="'Inter', system-ui, sans-serif", size=12, color=C_TEXT),
+    margin=dict(l=16, r=180, t=32, b=16),
+    legend=dict(orientation="v", yanchor="middle", y=0.5,
+                xanchor="left", x=1.02, bgcolor="rgba(255,255,255,0.9)",
+                bordercolor=C_BORDER, borderwidth=1, font=dict(size=11)),
+)
+fig3.write_image(os.path.join(OUT_DIR, "fig_language_bias.png"), width=1000, scale=2)
 
 # ── 4. Diversity over time — Shannon entropy ──────────────────────────────────
 print("Generating fig_diversity.png…")
@@ -185,5 +205,34 @@ fig4.update_xaxes(title_text="", showgrid=False)
 fig4.update_yaxes(title_text="Shannon H (bits)", gridcolor=C_BORDER)
 _style(fig4, height=360)
 fig4.write_image(os.path.join(OUT_DIR, "fig_diversity.png"), width=900, scale=2)
+
+# ── 5. Subfield distribution — stacked area over time ────────────────────────
+print("Generating fig_subfields.png…")
+_sf_col = "subfield" if "subfield" in df.columns else "primary_topic"
+TOP_SUBFIELDS = (
+    df[_sf_col].dropna()
+    .loc[lambda s: s.str.strip() != ""]
+    .value_counts().head(TOP_N).index.tolist()
+)
+subfield_trend_df = (
+    df[df[_sf_col].isin(TOP_SUBFIELDS)]
+    .groupby(["year", _sf_col]).size().reset_index(name="count")
+)
+fig5 = px.area(subfield_trend_df, x="year", y="count", color=_sf_col,
+               line_shape="spline", color_discrete_sequence=PALETTE,
+               category_orders={_sf_col: TOP_SUBFIELDS})
+fig5.update_traces(stackgroup="one", groupnorm="percent", line=dict(width=0.6))
+fig5.update_xaxes(title_text="", showgrid=False)
+fig5.update_yaxes(title_text="% share of publications", range=[0, 100],
+                  ticksuffix="%", gridcolor=C_BORDER)
+fig5.update_layout(
+    template="plotly_white", paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+    height=400, font=dict(family="'Inter', system-ui, sans-serif", size=12, color=C_TEXT),
+    margin=dict(l=16, r=220, t=32, b=16),
+    legend=dict(orientation="v", yanchor="middle", y=0.5,
+                xanchor="left", x=1.02, bgcolor="rgba(255,255,255,0.9)",
+                bordercolor=C_BORDER, borderwidth=1, font=dict(size=11)),
+)
+fig5.write_image(os.path.join(OUT_DIR, "fig_subfields.png"), width=1100, scale=2)
 
 print(f"\nAll figures saved to {OUT_DIR}/")

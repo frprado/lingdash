@@ -92,6 +92,11 @@ Shannon entropy (H bits) computed per year measures how evenly linguistic attent
 
 ![Language diversity index over time](assets/fig_diversity.png)
 
+### Subfield distribution
+The chart below shows how the relative share of the top six linguistics subfields — as classified by zero-shot embedding similarity — has evolved over time. Shifts in the stacked bands reflect changing research priorities within the field: the rise of computational linguistics and NLP is visible from the 1990s onward, while more traditional subfields such as syntax and historical linguistics show a declining relative share.
+
+![Subfield distribution over time](assets/fig_subfields.png)
+
 ---
 
 ## Limitations
