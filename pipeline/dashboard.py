@@ -204,18 +204,19 @@ df["cited_by"] = (
     pd.to_numeric(df.get("cited_by", pd.Series([0] * len(df))), errors="coerce")
     .fillna(0).astype(int)
 )
-df["paper_country"]      = df.get("paper_country",      pd.Series([""] * len(df))).fillna("")
+df["paper_country"]      = df.get("paper_country",      pd.Series([""] * len(df))).fillna("").astype("category")
 df["language_mentioned"] = df.get("language_mentioned", pd.Series([""] * len(df))).fillna("")
-df["journal"]            = df.get("journal",            pd.Series([""] * len(df))).fillna("")
+df["journal"]            = df.get("journal",            pd.Series([""] * len(df))).fillna("").astype("category")
 df["title"]              = df.get("title",              pd.Series([""] * len(df))).fillna("")
-df["primary_topic"]      = df.get("primary_topic",      pd.Series([""] * len(df))).fillna("")
+df["primary_topic"]      = df.get("primary_topic",      pd.Series([""] * len(df))).fillna("").astype("category")
 
 df["concept_list"]   = df.get("concepts", pd.Series([[]] * len(df))).apply(parse_concepts_field)
 df["language_list"]  = df["language_mentioned"].apply(normalize_languages_field)
 df["country_name"]   = df["paper_country"].apply(lambda x: iso2_to_name(x) if isinstance(x, str) else None)
 df["country_alpha3"] = df["paper_country"].apply(lambda x: iso2_to_alpha3(x) if isinstance(x, str) else None)
 
-df_lang     = df.explode("language_list").copy()
+_lang_cols = [c for c in ["year", "language_list", "journal"] if c in df.columns]
+df_lang = df[_lang_cols].explode("language_list").copy()
 df_lang["language_list"] = df_lang["language_list"].fillna("")
 
 # Load language family lookup (if linglist has a 'family' column)
@@ -234,7 +235,8 @@ if "family" in _linglist.columns:
 else:
     df_lang["family"] = "Unknown"
 
-df_concepts = df.explode("concept_list").copy()
+_concept_cols = [c for c in ["year", "concept_list"] if c in df.columns]
+df_concepts = df[_concept_cols].explode("concept_list").copy()
 df_concepts["concept_list"] = df_concepts["concept_list"].fillna("")
 
 # ─────────────────────────────────────────
