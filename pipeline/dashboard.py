@@ -19,7 +19,7 @@ import pycountry
 
 import plotly.express as px
 
-from dash import Dash, html, dcc, Input, Output, State, no_update, callback_context, dash_table
+from dash import Dash, html, dcc, Input, Output, State, no_update, callback_context
 import dash_bootstrap_components as dbc
 
 # ─────────────────────────────────────────
@@ -175,6 +175,7 @@ if not os.path.exists(_data_path):
 df = pd.read_parquet(_data_path) if _data_path.endswith(".parquet") else pd.read_csv(_data_path)
 df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
 df = df[df["primary_topic"].isin(KEEP_TOPICS)].copy()
+df.drop(columns=[c for c in ["abstract"] if c in df.columns], inplace=True)
 
 # Drop rows whose journal is confirmed non-linguistics (if allowlist exists)
 _allowlist_path = os.path.join(os.path.dirname(__file__), "journal_allowlist.csv")
@@ -190,7 +191,7 @@ if os.path.exists(_allowlist_path):
     df = df[_has_journal & df["journal"].isin(_good)].copy()
 
 expected_cols = {"title", "year", "doi", "cited_by", "journal", "concepts",
-                 "top_concept", "paper_country", "abstract", "primary_topic"}
+                 "top_concept", "paper_country", "primary_topic"}
 missing = expected_cols - set(df.columns)
 if missing:
     print(f"Warning: missing columns (will continue): {missing}")
@@ -345,36 +346,6 @@ top_journals_tab = dbc.Tab(label="Top Journals", tab_id="tab_top_journals", chil
     ], class_name="mt-2"),
 ])
 
-papers_tab = dbc.Tab(label="Papers", tab_id="tab_papers", children=[
-    dbc.Row(dbc.Col(
-        dash_table.DataTable(
-            id="papers_table",
-            columns=[], data=[],
-            page_size=20,
-            sort_action="native",
-            filter_action="native",
-            style_table={"overflowX": "auto"},
-            style_cell={
-                "textAlign": "left", "padding": "8px 12px",
-                "maxWidth": "420px", "overflow": "hidden",
-                "textOverflow": "ellipsis",
-                "fontFamily": "'Inter', system-ui, sans-serif", "fontSize": "13px",
-                "color": C_TEXT, "border": f"1px solid {C_BORDER}",
-            },
-            style_header={
-                "fontWeight": "600",
-                "backgroundColor": C_SIDEBAR,
-                "color": "#F1F5F9",
-                "border": f"1px solid {C_SIDEBAR}",
-                "fontFamily": "'Inter', system-ui, sans-serif", "fontSize": "11px",
-                "textTransform": "uppercase", "letterSpacing": "0.06em",
-            },
-            style_data_conditional=[
-                {"if": {"row_index": "odd"}, "backgroundColor": C_BG},
-            ],
-        )
-    ), class_name="mt-3"),
-])
 
 LABEL_STYLE = {
     "fontWeight": "600", "fontSize": "10px",
@@ -470,7 +441,7 @@ app.layout = dbc.Container([
         dbc.Col(controls, width=3),
         dbc.Col(
             dbc.Tabs(
-                [overview_tab, journals_countries_tab, langs_concepts_tab, top_journals_tab, papers_tab],
+                [overview_tab, journals_countries_tab, langs_concepts_tab, top_journals_tab],
                 id="tabs", active_tab="tab_overview",
             ),
             width=9,
@@ -650,8 +621,6 @@ def exploded_bar_and_trend(exploded_series, exploded_df, year_col, color_col,
     Output("lang_family_treemap", "figure"),
     Output("diversity_trend",     "figure"),
 
-    Output("papers_table",    "columns"),
-    Output("papers_table",    "data"),
 
     Input("year_range",       "value"),
     Input("topic_filter",     "value"),
@@ -775,13 +744,6 @@ def update_all(year_range, topics, countries, journals, languages, concepts,
     else:
         fig_diversity = style_fig(px.scatter(title="Language diversity index · per year"))
 
-    # ── papers table ──
-    table_cols = ["year", "title", "journal", "cited_by", "paper_country", "doi"]
-    available  = [c for c in table_cols if c in dff.columns]
-    table_df   = dff[available].copy()
-    columns    = [{"name": c, "id": c} for c in table_df.columns]
-    data       = table_df.to_dict("records")
-
     return (
         kpi_total, kpi_country, kpi_language, kpi_subfield,
         fig_overview,
@@ -790,7 +752,6 @@ def update_all(year_range, topics, countries, journals, languages, concepts,
         journal_bar_fig, journal_trend_fig,
         country_bar_fig, country_trend_fig,
         lang_trend_fig, lang_family_fig, fig_diversity,
-        columns, data,
     )
 
 
