@@ -439,6 +439,40 @@ app.layout = dbc.Container([
                    className="mb-0 mt-1", style={"fontSize": "12px", "color": C_MUTED}),
         ], style={"padding": "20px 4px 16px"}),
     ), style={"borderBottom": f"1px solid {C_BORDER}", "marginBottom": "20px"}),
+    dbc.Alert(
+        [
+            html.Div([
+                html.Strong("About this dashboard. ", style={"color": C_TEXT}),
+                html.Span(
+                    "This is a bibliometric study of ~80,000 peer-reviewed linguistics articles "
+                    "indexed in OpenAlex, spanning 1960–2024. It maps where research comes from, "
+                    "which languages it focuses on, and how the field's agenda has changed over six decades. "
+                    "Use the filters on the left to explore by year, country, journal, or language studied. "
+                    "Charts are cross-linked — clicking on a chart element filters the rest. ",
+                    style={"color": C_MUTED},
+                ),
+                html.A("Methodology & findings →",
+                       href="https://github.com/frprado/lingdash/blob/main/ABOUT.md",
+                       target="_blank",
+                       style={"color": C_PRIMARY, "fontWeight": "600", "fontSize": "12px",
+                              "textDecoration": "none"}),
+            ]),
+        ],
+        id="intro_alert",
+        dismissable=True,
+        is_open=True,
+        style={
+            "backgroundColor": "#F8FAFC",
+            "border": f"1px solid {C_BORDER}",
+            "borderLeft": f"3px solid {C_PRIMARY}",
+            "borderRadius": "8px",
+            "padding": "12px 16px",
+            "fontSize": "12px",
+            "marginBottom": "20px",
+            "color": C_TEXT,
+        },
+        color="light",
+    ),
     dbc.Row([
         dbc.Col(controls, width=3),
         dbc.Col(
