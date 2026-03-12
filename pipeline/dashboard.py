@@ -435,8 +435,12 @@ app.layout = dbc.Container([
                 html.Span(" · A Bibliometric Study", style={"color": C_PRIMARY, "fontWeight": "500",
                                                "fontSize": "1.1rem"}),
             ], style={"display": "inline-flex", "alignItems": "baseline", "gap": "2px"}),
-            html.P("~80,000 peer-reviewed articles · OpenAlex · 1960–2024",
-                   className="mb-0 mt-1", style={"fontSize": "12px", "color": C_MUTED}),
+            html.P([
+                "~80,000 peer-reviewed articles · OpenAlex · 1960–2024 · ",
+                html.A("F Prado", href="https://frprado.github.io", target="_blank",
+                       style={"color": C_MUTED, "textDecoration": "none",
+                              "borderBottom": f"1px solid {C_BORDER}"}),
+            ], className="mb-0 mt-1", style={"fontSize": "12px", "color": C_MUTED}),
         ], style={"padding": "20px 4px 16px"}),
     ), style={"borderBottom": f"1px solid {C_BORDER}", "marginBottom": "20px"}),
     dbc.Alert(
