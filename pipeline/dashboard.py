@@ -20,6 +20,7 @@ import pycountry
 import plotly.express as px
 
 from dash import Dash, html, dcc, Input, Output, State, no_update, callback_context
+from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
 # ─────────────────────────────────────────
@@ -386,19 +387,19 @@ controls = html.Div([
                      placeholder="All topics", className="mb-3",
                      style=_dd_style),
         html.Label("Country", style=LABEL_STYLE),
-        dcc.Dropdown(id="country_filter", options=country_options, multi=True,
+        dcc.Dropdown(id="country_filter", options=country_options[:100], multi=True,
                      placeholder="All countries", className="mb-3",
                      style=_dd_style),
         html.Label("Journal", style=LABEL_STYLE),
-        dcc.Dropdown(id="journal_filter", options=journal_options, multi=True,
+        dcc.Dropdown(id="journal_filter", options=journal_options[:100], multi=True,
                      placeholder="All journals", className="mb-3",
                      style=_dd_style),
         html.Label("Language studied", style=LABEL_STYLE),
-        dcc.Dropdown(id="language_filter", options=language_options, multi=True,
+        dcc.Dropdown(id="language_filter", options=language_options[:100], multi=True,
                      placeholder="All languages", className="mb-3",
                      style=_dd_style),
         html.Label("Concept", style=LABEL_STYLE),
-        dcc.Dropdown(id="concept_filter", options=concept_options, multi=True,
+        dcc.Dropdown(id="concept_filter", options=concept_options[:100], multi=True,
                      placeholder="All concepts", className="mb-3",
                      style=_dd_style),
         html.Label("Title search", style=LABEL_STYLE),
@@ -587,13 +588,13 @@ def make_norm_trend(trend_df, x_col, y_col, color_col, title, category_order=Non
     return fig
 
 
-def bar_and_trend(series, label, series_name, dff_ref, top_n=20, trend_n=TOP_N):
+def bar_and_trend(series, label, series_name, dff_ref, top_n=20, trend_n=TOP_N, title=None):
     s = series.dropna()
     s = s[s.astype(str).str.strip() != ""]
     counts = s.value_counts().reset_index()
     counts.columns = [label, "count"]
     top_cats = counts[label].head(trend_n).tolist()
-    bar_fig = make_bar(counts.head(top_n), "count", label, f"Top {label}s")
+    bar_fig = make_bar(counts.head(top_n), "count", label, title or f"Top {label}s")
     if top_cats:
         trend_df = (
             dff_ref[dff_ref[series_name].isin(top_cats)]
@@ -733,7 +734,7 @@ def update_all(year_range, topics, countries, journals, languages, concepts,
     journal_bar_fig, journal_trend_fig = bar_and_trend(
         dff["journal"], "journal", "journal", dff)
     country_bar_fig, country_trend_fig = bar_and_trend(
-        dff["country_name"], "country", "country_name", dff)
+        dff["country_name"], "country", "country_name", dff, title="Top countries")
 
     # ── languages ──
     lang_series   = df_lang.loc[dff.index]["language_list"]
@@ -955,6 +956,37 @@ def update_top_journals(year_range):
         fig_lang = style_fig(px.scatter(title="Language distribution per journal"))
 
     return kpi_top, kpi_bot, fig_ts, fig_div, fig_lang
+
+
+# ─────────────────────────────────────────
+# Dynamic dropdown search callbacks
+# ─────────────────────────────────────────
+_SEARCH_MAX = 200
+
+def _make_search_callback(dropdown_id, all_options):
+    @app.callback(
+        Output(dropdown_id, "options"),
+        Input(dropdown_id, "search_value"),
+        State(dropdown_id, "value"),
+    )
+    def _cb(search, selected):
+        if search:
+            sl = search.lower()
+            opts = [o for o in all_options if sl in o["label"].lower()][:_SEARCH_MAX]
+        else:
+            opts = all_options[:_SEARCH_MAX]
+        # Always keep already-selected values visible
+        if selected:
+            present = {o["value"] for o in opts}
+            extras = [{"label": v, "value": v} for v in selected if v not in present]
+            opts = extras + opts
+        return opts
+    return _cb
+
+_make_search_callback("journal_filter",  journal_options)
+_make_search_callback("country_filter",  country_options)
+_make_search_callback("language_filter", language_options)
+_make_search_callback("concept_filter",  concept_options)
 
 
 # ─────────────────────────────────────────
